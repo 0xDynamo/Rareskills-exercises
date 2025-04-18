@@ -1,66 +1,66 @@
-## Foundry
+# Smart Contract Detection Puzzles
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+This repository contains my attempt at solving the RareSkills exercises related to detecting if an address is a smart contract in Solidity.
 
-Foundry consists of:
+## Puzzle 1: Constructor Call Detection
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+Can you get the following contract to return `true` when `puzzle()` is called without causing a revert?
 
-## Documentation
-
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
+```solidity
+contract Puzzle {        
+    function puzzle()
+        external
+        view
+        returns (bool success) {                
+            require(msg.sender != tx.origin);                
+            require(msg.sender.code.length == 0);                
+            success = true;        
+    }
+}
 ```
 
-### Test
+### Challenge
+- The function requires that `msg.sender` is not equal to `tx.origin` (meaning the caller must be a contract)
+- However, it also requires that the calling contract has no code (`code.length == 0`)
+- This seems contradictory! How can the caller be a contract but have no code?
 
-```shell
-$ forge test
-```
+### Hint
+Think about when a contract's code is not yet deployed but it can still make external calls...
 
-### Format
+## Puzzle 2: tx.origin Code Examination
 
-```shell
-$ forge fmt
-```
+What should `tx.origin.code.length` return? Does it always return the same value?
 
-### Gas Snapshots
+### Challenge
+- Understand what `tx.origin` represents in the EVM
+- Determine whether `tx.origin` can ever be a contract address
+- Explore the implications of this for contract security
 
-```shell
-$ forge snapshot
-```
+## Background Knowledge
 
-### Anvil
+This exercise explores three methods for detecting if an address is a smart contract:
+1. Comparing `msg.sender` and `tx.origin`
+2. Checking `code.length` of an address
+3. Examining `codehash` of an address
 
-```shell
-$ anvil
-```
+Each method has different trade-offs and edge cases that are important to understand for secure smart contract development.
 
-### Deploy
+## My Approach
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
+This repository documents my personal attempt at solving these RareSkills challenges. I'm working through these exercises to improve my understanding of smart contract security and Solidity edge cases.
 
-### Cast
+## Getting Started
 
-```shell
-$ cast <subcommand>
-```
+1. Clone this repository
+2. Use a development environment like Remix or Hardhat to experiment with the solutions
+3. Write tests to verify the behavior
 
-### Help
+## Learning Resources
 
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+I'm working through these puzzles as part of my learning journey with RareSkills content. For anyone interested in similar challenges:
+- [RareSkills Solidity Course](https://www.rareskills.io/solidity-course)
+- [RareSkills Solidity Bootcamp](https://www.rareskills.io/solidity-bootcamp)
+
+## Acknowledgements
+
+These puzzles are from RareSkills' article "Three ways to detect if an address is a smart contract".
