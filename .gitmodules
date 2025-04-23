@@ -1,0 +1,3 @@
+[submodule "overmint/overmint2/lib/forge-std"]
+	path = overmint/overmint2/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
